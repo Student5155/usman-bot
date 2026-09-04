@@ -4,279 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NUR.LIFE Market</title>
-    <!-- Подключаем скрипт Telegram WebApp -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #ffffff);
-            --text-color: var(--tg-theme-text-color, #000000);
-            --button-color: var(--tg-theme-button-color, #3390ec);
-            --button-text: var(--tg-theme-button-text-color, #ffffff);
-            --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
             margin: 0;
-            padding: 0;
-            padding-bottom: 80px; /* Отступ для нижней кнопки */
+            padding: 15px;
+            padding-bottom: 80px;
         }
-
-        header {
-            padding: 20px;
+        h1 {
             text-align: center;
-            background: linear-gradient(135deg, #2c3e50, #4ca1af);
-            color: white;
-            border-bottom-left-radius: 20px;
-            border-bottom-right-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--tg-theme-text-color, #000);
         }
-
-        h1 { margin: 0; font-size: 22px; }
-        p.subtitle { margin: 5px 0 0; opacity: 0.9; font-size: 14px; }
-
-        .category-title {
-            padding: 15px 20px 5px;
+        .category {
             font-size: 18px;
             font-weight: bold;
-            color: var(--text-color);
-            border-left: 4px solid var(--button-color);
-            margin-left: 15px;
-            margin-top: 10px;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-text-color, #000);
         }
-
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .product-card {
-            background-color: var(--secondary-bg);
+        .product {
+            background-color: var(--tg-theme-secondary-bg-color, #f4f4f5);
             border-radius: 12px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
+            padding: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-
-        .product-card:active { transform: scale(0.98); }
-
-        .product-img-placeholder {
+        .product img {
             width: 100%;
-            height: 140px;
-            background: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #777;
-            font-size: 12px;
-            text-align: center;
-            padding: 10px;
-            box-sizing: border-box;
-            background-size: cover;
-            background-position: center;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-color: #e0e0e0;
         }
-
-        .product-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; }
-        .product-name { font-weight: 600; font-size: 15px; margin-bottom: 5px; line-height: 1.3; }
-        .product-desc { font-size: 12px; color: #666; margin-bottom: 10px; flex-grow: 1; }
-        
-        .price-row {
+        .product-name {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .product-desc {
+            font-size: 13px;
+            color: var(--tg-theme-hint-color, #707579);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .product-bottom {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto;
         }
-
-        .price { font-weight: bold; font-size: 16px; color: #27ae60; }
-        
-        .add-btn {
-            background-color: var(--button-color);
-            color: var(--button-text);
+        .price {
+            font-weight: bold;
+            color: var(--tg-theme-text-color, #000);
+            font-size: 16px;
+        }
+        .btn {
+            background-color: var(--tg-theme-button-color, #3390ec);
+            color: var(--tg-theme-button-text-color, #ffffff);
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
         }
-
-        /* Плавающая кнопка корзины */
-        .main-button-container {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-        
-        .order-btn {
-            width: 100%;
-            background-color: #27ae60;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
-            display: none; /* Скрыта пока корзина пуста */
+        .btn:active {
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
-
-<header>
     <h1>NUR.LIFE MARKET</h1>
-    <p class="subtitle">Опт и розница | Уфа</p>
-</header>
+    <div id="app">Загрузка товаров...</div>
 
-<div id="catalog">
-    <!-- Сюда JavaScript добавит товары -->
-</div>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
 
-<div class="main-button-container">
-    <button id="orderBtn" class="order-btn" onclick="sendOrder()">Оформить заказ (<span id="count">0</span>)</button>
-</div>
+        // Я уже вставил правильные ссылки на все 5 твоих картинок!
+        const products = [
+            { 
+                category: "Витамины и БАДы", 
+                name: "AKSUVITAL Vitamin D3 + K2", 
+                desc: "2000/5000/10000 IU. Для костей, зубов и иммунитета.", 
+                price: "от 800₽",
+                image: "https://raw.githubusercontent.com/Student5155/usman-bot/main/2026-09-01%2019.38.44.jpg"
+            },
+            { 
+                category: "Витамины и БАДы", 
+                name: "Black Seed Oil (Черный тмин)", 
+                desc: "150 капсул. Масло холодного отжима для общего укрепления.", 
+                price: "1200₽",
+                image: "https://raw.githubusercontent.com/Student5155/usman-bot/main/2026-09-01%2019.39.13.jpg"
+            },
+            { 
+                category: "Красота и Молодость", 
+                name: "Nutraxin Collagen Booster", 
+                desc: "Растительный коллаген. 300г. Веганский состав.", 
+                price: "1500₽",
+                image: "https://raw.githubusercontent.com/Student5155/usman-bot/main/2026-09-01%2019.39.21.jpg"
+            },
+            { 
+                category: "Натуральные продукты", 
+                name: "Кыст Аль-Хинди (Капсулы)", 
+                desc: "100 капсул. Натуральный корень из Индии.", 
+                price: "900₽",
+                image: "https://raw.githubusercontent.com/Student5155/usman-bot/main/2026-09-01%2019.39.37.jpg"
+            },
+            { 
+                category: "Натуральные продукты", 
+                name: "Чай Расторопша (Minor)", 
+                desc: "20 пакетиков. Натуральная защита и очистка печени.", 
+                price: "450₽",
+                image: "https://raw.githubusercontent.com/Student5155/usman-bot/main/2026-09-01%2019.39.43.jpg"
+            }
+        ];
 
-<script>
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // Разворачиваем на весь экран
+        const app = document.getElementById('app');
+        let html = '';
+        let currentCategory = '';
 
-    // База данных товаров (из твоих картинок)
-    // В поле image можно будет вставить ссылки на реальные фото позже
-    const products = [
-        {
-            id: 1,
-            category: "Витамины и БАДы",
-            name: "AKSUVITAL Vitamin D3 + K2",
-            desc: "2000/5000/10000 IU. Для костей и иммунитета.",
-            price: "от 800₽", 
-            image: "https://via.placeholder.com/300x300/2c3e50/ffffff?text=D3+K2" 
-        },
-        {
-            id: 2,
-            category: "Витамины и БАДы",
-            name: "Black Seed Oil (Черный тмин)",
-            desc: "150 капсул. Масло черного тмина холодного отжима.",
-            price: "1200₽",
-            image: "https://via.placeholder.com/300x300/000000/ffffff?text=Black+Seed"
-        },
-        {
-            id: 3,
-            category: "Красота и Молодость",
-            name: "Nutraxin Collagen Booster",
-            desc: "Растительный коллаген. 300г. Веганский состав.",
-            price: "1500₽",
-            image: "https://via.placeholder.com/300x300/27ae60/ffffff?text=Collagen"
-        },
-        {
-            id: 4,
-            category: "Натуральные продукты",
-            name: "Кыст Аль-Хинди (Капсулы)",
-            desc: "100 капсул. Корень из Индии. Для иммунитета.",
-            price: "900₽",
-            image: "https://via.placeholder.com/300x300/f39c12/ffffff?text=Qust+Al-Hindi"
-        },
-        {
-            id: 5,
-            category: "Натуральные продукты",
-            name: "Чай Расторопша (Minor)",
-            desc: "20 пакетиков. Защита печени и детокс.",
-            price: "450₽",
-            image: "https://via.placeholder.com/300x300/8e44ad/ffffff?text=Milk+Thistle"
-        }
-    ];
-
-    let cart = [];
-
-    function renderCatalog() {
-        const container = document.getElementById('catalog');
-        // Группируем товары по категориям
-        const categories = {};
-        
         products.forEach(p => {
-            if (!categories[p.category]) categories[p.category] = [];
-            categories[p.category].push(p);
+            if (p.category !== currentCategory) {
+                currentCategory = p.category;
+                html += `<div class="category">${currentCategory}</div>`;
+            }
+            
+            html += `
+                <div class="product">
+                    ${p.image ? `<img src="${p.image}" alt="${p.name}">` : ''}
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-desc">${p.desc}</div>
+                    <div class="product-bottom">
+                        <span class="price">${p.price}</span>
+                        <button class="btn" onclick="addToCart('${p.name}')">В корзину</button>
+                    </div>
+                </div>
+            `;
         });
 
-        // Отрисовываем
-        for (const [catName, items] of Object.entries(categories)) {
-            // Заголовок категории
-            const catTitle = document.createElement('div');
-            catTitle.className = 'category-title';
-            catTitle.textContent = catName;
-            container.appendChild(catTitle);
+        app.innerHTML = html;
 
-            // Сетка товаров
-            const grid = document.createElement('div');
-            grid.className = 'products-grid';
-
-            items.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div class="product-img-placeholder" style="background-image: url('${item.image}')">
-                        ${!item.image.includes('http') ? item.name : ''}
-                    </div>
-                    <div class="product-info">
-                        <div class="product-name">${item.name}</div>
-                        <div class="product-desc">${item.desc}</div>
-                        <div class="price-row">
-                            <span class="price">${item.price}</span>
-                            <button class="add-btn" onclick="addToCart(${item.id})">В корзину</button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
+        function addToCart(productName) {
+            tg.showPopup({
+                title: 'Успешно!',
+                message: `Товар "${productName}" добавлен в корзину.`,
+                buttons: [{type: 'ok'}]
             });
-            container.appendChild(grid);
         }
-    }
-
-    function addToCart(id) {
-        const product = products.find(p => p.id === id);
-        cart.push(product);
-        updateButton();
-        
-        // Вибрация при добавлении (работает в Telegram)
-        tg.HapticFeedback.impactOccurred('light');
-    }
-
-    function updateButton() {
-        const btn = document.getElementById('orderBtn');
-        const countSpan = document.getElementById('count');
-        
-        if (cart.length > 0) {
-            btn.style.display = 'block';
-            countSpan.textContent = cart.length;
-        } else {
-            btn.style.display = 'none';
-        }
-    }
-
-    function sendOrder() {
-        // Формируем текст заказа
-        let message = "🛒 *Новый заказ:*\n\n";
-        cart.forEach((item, index) => {
-            message += `${index + 1}. ${item.name} (${item.price})\n`;
-        });
-        message += `\n💬 *Комментарий:* (напишите адрес)`;
-
-        // Отправляем данные боту
-        tg.sendData(JSON.stringify({ action: 'order', items: cart }));
-        
-        // Или просто закрываем приложение, если sendData не настроен на бэкенде
-        // tg.close(); 
-    }
-
-    // Запуск
-    renderCatalog();
-</script>
-
+    </script>
 </body>
 </html>
